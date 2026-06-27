@@ -14,7 +14,11 @@
     "@eslint/js": "^10.0.1",
     "@unocss/eslint-plugin": "^66.7.3",
     "eslint": "^10.6.0",
+    "eslint-config-neon": "^0.5.4",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-react-compiler": "^19.1.0-rc.2",
     "globals": "^17.7.0",
-    "jest": "^30.4.2"
+    "jest": "^30.4.2",
+    "lodash.merge": "^4.6.2"
   }
 }
