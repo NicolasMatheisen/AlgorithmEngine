@@ -20,5 +20,8 @@
     "globals": "^17.7.0",
     "jest": "^30.4.2",
     "lodash.merge": "^4.6.2"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }

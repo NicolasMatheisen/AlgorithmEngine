@@ -1,42 +1,38 @@
-const http = require('http');
-const fileSystem = require('fs').promises;
-const path = require('path');
-const { scanDirectory } = require('./src/scanner');
+import fs from 'node:fs';
+import path from 'node:path';
+import express from 'express';
+import { generateHTML } from './htmlGenerator.js';
 
+const app = express();
 const PORT = 3000;
+const ROOT_FOLDER = './src/algorithms'; 
 
-const server = http.createServer(async (request, response) => {
-    if (request.url === '/api/files' && request.method === 'GET') {
-        try {
-            const targetPath = path.join(__dirname, 'meine-dateien');
-            const folderTree = await scanDirectory(targetPath);
-            
-            response.writeHead(200, { 'Content-Type': 'application/json' });
-            response.end(JSON.stringify(folderTree));
-        } catch (error) {
-            response.writeHead(500, { 'Content-Type': 'application/json' });
-            response.end(JSON.stringify({ error: 'Ordner-Scan fehlgeschlagen' }));
+function getAlgorithmsData() {
+    const scanDir = fs.readdirSync(ROOT_FOLDER, { recursive: true, withFileTypes: true });
+    const collectOnlyFiles = scanDir.filter(dirent => dirent.isFile());
+
+    return collectOnlyFiles.reduce((grouped, file) => {
+        const topic = path.relative(ROOT_FOLDER, file.parentPath);
+        if (!grouped[topic]) {
+            grouped[topic] = [];
         }
-        return;
-    }
+        grouped[topic].push(file.name);
+        return grouped;
+    }, {});
+}
 
-    let filePath = path.join(__dirname, 'public', request.url === '/' ? 'index.html' : request.url);
+
+app.get('/', (req, res) => {
+    console.log('localhost wurde aufgerufen! Scanne Ordner...');
     
-    try {
-        const fileContent = await fileSystem.readFile(filePath);
-        
-        let contentType = 'text/html';
-        if (filePath.endsWith('.js')) contentType = 'application/javascript';
-        if (filePath.endsWith('.css')) contentType = 'text/css';
-
-        response.writeHead(200, { 'Content-Type': contentType });
-        response.end(fileContent);
-    } catch (error) {
-        response.writeHead(404, { 'Content-Type': 'text/plain' });
-        response.end('404 - Datei nicht gefunden');
-    }
+    const algorithmsByTopic = getAlgorithmsData();
+    
+    const htmlContent = generateHTML(algorithmsByTopic, false); 
+    
+    res.send(htmlContent);
 });
 
-server.listen(PORT, () => {
-    console.log(`Server läuft auf http://localhost:${PORT}`);
+
+app.listen(PORT, () => {
+    console.log(`Server läuft! Öffne http://localhost:${PORT} in deinem Browser.`);
 });
