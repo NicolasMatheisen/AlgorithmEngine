@@ -1,6 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
-
 export function generateHTML(algorithmsByTopic) {
 	let html = `<!DOCTYPE html>
                 <html>
