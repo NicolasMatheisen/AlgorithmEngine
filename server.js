@@ -32,6 +32,7 @@ app.get('/', (req, res) => {
     res.send(htmlContent);
 });
 
+app.use(express.static('.'));
 
 app.listen(PORT, () => {
     console.log(`Server läuft! Öffne http://localhost:${PORT} in deinem Browser.`);

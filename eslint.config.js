@@ -15,7 +15,7 @@ export default defineConfig([
       globals: {
         ...globals.browser, 
         ...globals.node,
-        ...globals.jest // <-- Das hier fügt die Jest-Globals (test, expect, etc.) hinzu!
+        ...globals.jest 
       } 
     } 
   },
